@@ -49,3 +49,12 @@
 - 依小組指示，decisions.md 中 19 處「暫定假設」改為「決定」；只剩合作醫院需確認的部分保留「待確認」。
 - requirements.md 移除 29 條 AC 的「暫定」標示，4.2 節改為「已決定」；新增 AC-25.6(試辦目標，基準值量測後驗收)。
 - 順手修正 decisions.md 三處過時引用：見 Q-15 → D-015、見 Q-16 → D-016、D-015 的「櫃檯」→ 服務台。
+
+## 2026-11-23 — 產出 design.md 與建置 Firebase emulators
+
+- design.md：規則模組 16 個(R-*)、AI 模組 3 個(A-*)；資料單向流動(輸入凍結＋雜湊比對、AI 只回傳候選 id)；R-GUARD 三類檢查；AI 失敗備援；需求→模組→測試檔對照表；設計待決事項 DD-01～DD-07。
+- 提示詞檔由程式逐行複製規格原文產生；test_prompts_verbatim.py 檢查逐字相同。
+- 後端：Python 3.12 venv(uv)、Flask app 包在 Cloud Functions `api`(asia-east1)；先寫 test_health.py(失敗)再實作，pytest 3 項通過。
+- 前端：Vite + React + TypeScript 骨架，dev server 將 /api 代理到 Functions emulator。
+- Emulators：auth 9099、functions 5001、firestore 8080、hosting 5100(5000 被 macOS AirPlay 佔用)、UI 4000；專案 demo-aiguide。煙霧測試全部 200，/api/health 經 Hosting 轉發回傳 {"status":"ok"}。
+- firestore.rules 暫時全部拒絕，待撰寫規則測試後再開放讀取。

@@ -37,3 +37,9 @@ firestore-debug.log
 # 其他
 *.log
 coverage/
+
+# Firebase
+.firebase/
+*-debug.log
+functions/.secret.local
+.runtimeconfig.json

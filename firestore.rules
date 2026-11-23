@@ -1,0 +1,10 @@
+rules_version = '2';
+// 所有寫入都經過後端(Admin SDK)，前端一律不能寫入。
+// 讀取權限會依 design.md 第 7.3 節，在撰寫 tests/firestore-rules 測試後逐步開放。
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
