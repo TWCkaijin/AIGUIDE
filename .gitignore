@@ -1,0 +1,36 @@
+# 環境變數與金鑰
+.env
+.env.*
+!.env.example
+
+# Claude / 編輯器
+.claude/
+.vscode/
+.idea/
+
+# 作業系統
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+dist/
+build/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# 其他
+*.log
+coverage/
