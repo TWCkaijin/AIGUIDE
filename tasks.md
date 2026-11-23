@@ -14,3 +14,4 @@
 - [x] 建立 Firebase emulators 設定、Flask 後端骨架與 Vite React 前端骨架，並以 emulators:exec 煙霧測試驗證
 - [x] 逐題釐清 design.md 設計待決事項 DD-01～DD-07(D-020～D-025)
 - [x] 產出模擬資料草稿(mock_data_draft/，D-024、D-025)與一致性檢查腳本
+- [x] 依 requirements.md 與 decisions.md 產出 test-cases.md(140 案例、8 項待確認 TQ)
