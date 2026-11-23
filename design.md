@@ -1,6 +1,6 @@
 # design.md — 醫院通系統設計
 
-> 依據：`requirements.md`(FR／NFR／AC)與 `decisions.md`(D-001～D-020)。規格書 `AI-specification.md` 不修改。
+> 依據：`requirements.md`(FR／NFR／AC)與 `decisions.md`(D-001～D-021)。規格書 `AI-specification.md` 不修改。
 > 本文件的技術選型由開發端規劃(依小組指定：雲端優先 Firebase、前端 Vite + React、後端 Python Flask)。
 > 規格與決策都沒有寫的數值、名單與規則，本文件不自行填入，一律列在第 10 節「設計待決事項」(DD-xx)。
 
@@ -34,7 +34,7 @@
 | **R-WL** 白名單組裝 | 只取姓名、年齡、性別、醫囑、無障礙需求，組成送給 AI 的病人資料 | FR-07、FR-13、FR-14、FR-22、D-006 |
 | **R-GUARD** 輸出檢查 | 檢查 AI 輸出的格式、必須包含的內容、不得出現的內容(見第 4 節) | FR-01、FR-21、FR-23、P3 |
 | **R-DEP** 依賴檢查(RuleBase 檢查者) | 比對 AI 選定的流程是否違反流程依賴表 | FR-02、FR-03、D-008 |
-| **R-ORCH** 規劃流程控制 | 串接 R-CAND → A-PLAN → R-GUARD(含 R-ROUTE) → 檢查者；處理重試上限、檢查者模式、失敗轉備援；記錄系統錯誤 | FR-03、FR-04、D-008、D-011 |
+| **R-ORCH** 規劃流程控制 | 串接 R-CAND → A-PLAN → R-GUARD → 檢查者(依模式：R-ROUTE＋R-DEP／A-CHECK)；處理重試上限、檢查者模式、失敗轉備援；記錄系統錯誤 | FR-03、FR-04、D-008、D-011 |
 | **R-DESK** 服務台備援 | 依最新生效樓層圖選服務台與路線、產生固定文案 | FR-04、FR-21、NFR-01、D-017 |
 | **R-QUEUE** 模擬叫號 | 提供 (b) 預計等候時間、(c) 目前叫號、預測人流(皆為模擬資料) | FR-15、FR-16 |
 | **R-IMPACT** 變動影響判斷 | 新版本生效時，比對各導引工作階段的當前與未走路段、未抵達站點 | FR-20、D-015、D-018 |
@@ -74,9 +74,9 @@
                                             ▼
                                   AiPlanOutput(下一站 id、路線節點序列、文字)
                                             ▼
-                        R-GUARD 格式／必含／不得出現／R-ROUTE ─不通過┐
+                        R-GUARD 格式／必含／不得出現(一律執行) ─不通過┐
                                             ▼                    │
-                        檢查者(依模式：R-DEP／A-CHECK／兩者) ─不通過┤
+              檢查者(依模式：R-ROUTE＋R-DEP／A-CHECK／兩者，D-021) ─不通過┤
                                             ▼                    ▼
                                     發布導引結果          R-ORCH 重試(上限 D-011)
                                             ▼                    ▼ 超過上限／AI 失敗
@@ -94,12 +94,12 @@
 
 ## 4. AI 輸出檢查(R-GUARD)
 
-A-PLAN 使用 Claude API 的結構化輸出(`output_config.format` 的 JSON Schema)。即使如此，後端仍完整驗證一次，三類檢查全部通過才交給檢查者。
+A-PLAN 使用 Claude API 的結構化輸出(`output_config.format` 的 JSON Schema)。即使如此，後端仍完整驗證一次，三類檢查全部通過才交給檢查者。依 D-021，R-GUARD 不受檢查者模式影響、一律執行；路線可不可走(R-ROUTE)與流程依賴(R-DEP)則依檢查者模式由規則程式或 A-CHECK 負責。
 
 | 類別 | 檢查項目 | 不通過時 |
 |---|---|---|
 | **格式** | 符合 `AiPlanOutput` JSON Schema(必要欄位、型別、無多餘欄位)；`stop_reason` 不是 `refusal`、不是 `max_tokens` | 視為 AI 失敗，計入重試 |
-| **必須包含** | `next_station_id` 屬於 R-CAND 的下一站候選；`route_node_ids` 由目前位置開始、在該下一站結束，且通過 R-ROUTE 檢查(相鄰節點有路段、路段開放、符合無障礙需求)；`explanation` 非空字串；`walk_minutes_estimate`、`total_minutes_estimate` 為數值或 null；`out_of_scope`、`suggest_help` 為布林值 | 計入重試 |
+| **必須包含** | `next_station_id` 屬於 R-CAND 的下一站候選；`route_node_ids` 由目前位置開始、在該下一站結束，且每個 id 都存在於樓層圖(可不可走由檢查者負責，見 D-021)；`explanation` 非空字串；`walk_minutes_estimate`、`total_minutes_estimate` 為數值或 null；`out_of_scope`、`suggest_help` 為布林值 | 計入重試 |
 | **不得出現** | 輸出中不得出現候選以外的下一站 id、樓層圖以外的節點 id；說明文字中出現的站點名稱(依 R-STATIC 名稱表比對)只能是被選中的站點或其路線經過的站點；不得出現白名單以外的病人欄位；不得出現緊急等級、病名、診斷、處置建議的欄位(Schema 不提供這些欄位) | 計入重試 |
 
 - `out_of_scope = true` 時(使用者問診斷或非就醫流程問題)：不顯示 AI 的說明文字，改由 R-DESK 顯示 [AC-21.3] 的固定文案與服務台路線。
@@ -244,7 +244,7 @@ firebase emulators:start --project demo-aiguide
 | 編號 | 問題 | 為何需要決定 | 相關 |
 |---|---|---|---|
 | ~~DD-01~~ | ~~下一站與路線的決策分工~~ | 已決定：D-020(下一站從候選挑選，路線由 LLM 自由描述後由規則檢查) | D-002 |
-| DD-02 | 檢查者模式為「只用專用 Agent」時，R-GUARD 的候選檢查是否仍然執行？(本設計：仍執行，因為它屬於 P3 的輸出檢查，不屬於 D-008 的檢查者) | 影響 D-008 三種模式的實際差異 | D-008 |
+| ~~DD-02~~ | ~~檢查者模式與規則輸出檢查的分工~~ | 已決定：D-021(R-GUARD 一律執行；R-ROUTE、R-DEP 依檢查者模式) | D-008 |
 | DD-03 | 說明文字中「不得出現」的診斷類用語詞表 | R-GUARD 需要具體詞表才能檢查；規格與決策都沒有提供 | FR-21、D-010 |
 | DD-04 | 模型呼叫逾時秒數、`max_tokens` | 影響備援觸發時機；規格與決策都沒有提供 | NFR-01 |
 | DD-05 | 模擬資料：樓層圖、流程依賴表、站點清單、服務台、顯眼地標、等候區對應 | R-STATIC、R-CAND、R-DESK、R-HELP 都需要；依 D-019 須先完成 AI 草稿與小組走查 | D-019、FR-05、FR-23 |
