@@ -8,3 +8,4 @@
 - [x] 補齊 requirements.md 的 Q-20～Q-34 暫定假設並對應 decisions.md
 - [x] 原型線上模型改為 Claude API Haiku(claude-haiku-5-5)
 - [x] 將 decisions.md 的暫定假設與 Q-34 決定整併進 requirements.md 的 AC
+- [x] 將第二輪(Q-20～Q-34)暫定假設轉為確定決策，並整併進 requirements.md
