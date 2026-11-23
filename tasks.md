@@ -12,3 +12,4 @@
 - [x] 產出 design.md(規則／AI 模組劃分、單向資料流、輸出檢查、備援、技術架構、需求→模組→測試對照表)
 - [x] 建立提示詞檔(規格原文)：functions/prompts/planner.system.md、checker.system.md、SOURCES.md
 - [x] 建立 Firebase emulators 設定、Flask 後端骨架與 Vite React 前端骨架，並以 emulators:exec 煙霧測試驗證
+- [x] 逐題釐清 design.md 設計待決事項 DD-01～DD-07(D-020～D-025)

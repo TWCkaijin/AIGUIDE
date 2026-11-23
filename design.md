@@ -1,6 +1,6 @@
 # design.md — 醫院通系統設計
 
-> 依據：`requirements.md`(FR／NFR／AC)與 `decisions.md`(D-001～D-024)。規格書 `AI-specification.md` 不修改。
+> 依據：`requirements.md`(FR／NFR／AC)與 `decisions.md`(D-001～D-025)。規格書 `AI-specification.md` 不修改。
 > 本文件的技術選型由開發端規劃(依小組指定：雲端優先 Firebase、前端 Vite + React、後端 Python Flask)。
 > 規格與決策都沒有寫的數值、名單與規則，本文件不自行填入，一律列在第 10 節「設計待決事項」(DD-xx)。
 
@@ -162,7 +162,7 @@ A-PLAN 使用 Claude API 的結構化輸出(`output_config.format` 的 JSON Sche
 | 即時通知 | Firestore 即時監聽(`onSnapshot`) | 站內通知、求助通報、行程更新(D-015「立即推送」) |
 | 部署 | Firebase Hosting ＋ Cloud Functions，區域 `asia-east1` | Hosting 將 `/api/**` 轉給 Functions |
 | 本機開發 | Firebase Local Emulator Suite | Auth、Functions、Firestore、Hosting、Emulator UI；專案 id `demo-aiguide`(demo- 開頭，不連到真實專案) |
-| 金鑰 | Functions secret `ANTHROPIC_API_KEY` | 本機放在 `functions/.secret.local`(不進版控) |
+| 金鑰 | Functions secret `ANTHROPIC_API_KEY`、固定測試碼(D-025) | 本機放在 `functions/.secret.local`(不進版控)，repo 只提供範本 |
 
 ### 7.2 目錄結構
 
@@ -249,7 +249,7 @@ firebase emulators:start --project demo-aiguide
 | DD-04 | 模型呼叫逾時秒數、`max_tokens` 的**初始值**；重試總等待時間是否設上限 | D-023 已決定兩者列為可在後台調整的模型設定(需簽核)，但初始值與總上限仍未決 | NFR-01、D-023 |
 | ~~DD-05~~ | ~~模擬資料的製作方式~~ | 已決定：D-024(開發端產出 JSON 草稿，小組依 D-019 核對後放入 `mock_data/`) | D-019、FR-05、FR-23 |
 | ~~DD-06~~ | ~~路線候選的產生方式與數量~~ | 依 D-020 不再產生路線候選，此項不適用 | FR-01 |
-| DD-07 | 模擬病人與固定測試碼的內容 | R-AUTH 與匯入腳本需要 | FR-09、FR-10 |
+| ~~DD-07~~ | ~~模擬病人與固定測試碼~~ | 已決定：D-025(併入 D-024 草稿；測試碼放 `functions/.secret.local`) | FR-09、FR-10 |
 
 ---
 
