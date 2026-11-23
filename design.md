@@ -1,6 +1,6 @@
 # design.md — 醫院通系統設計
 
-> 依據：`requirements.md`(FR／NFR／AC)與 `decisions.md`(D-001～D-019)。規格書 `AI-specification.md` 不修改。
+> 依據：`requirements.md`(FR／NFR／AC)與 `decisions.md`(D-001～D-020)。規格書 `AI-specification.md` 不修改。
 > 本文件的技術選型由開發端規劃(依小組指定：雲端優先 Firebase、前端 Vite + React、後端 Python Flask)。
 > 規格與決策都沒有寫的數值、名單與規則，本文件不自行填入，一律列在第 10 節「設計待決事項」(DD-xx)。
 
@@ -29,11 +29,12 @@
 | **R-STATIC** 靜態資料 | 依「版本組合」查詢站點、部門定位、樓層圖節點與路段、流程依賴表、服務台、地標、等候區 | FR-06、NFR-05、D-018 |
 | **R-VERSION** 版本與審核 | 部門資訊變更送審、審核、退回、代理提醒；模型設定送簽、簽核、版本紀錄；發布「生效版本組合」 | FR-06、FR-19、FR-24、D-009、D-016、D-018 |
 | **R-PROGRESS** 就醫進度 | 記錄站點完成(模擬登錄)、模擬醫囑推送、今日待辦步驟 | FR-05、FR-14、FR-17、D-013 |
-| **R-CAND** 候選產生 | 依流程依賴表、目前進度、有效醫囑，算出**允許的下一站候選**；依樓層圖與無障礙需求，算出每個候選的**路線候選** | FR-01、FR-02、FR-13、D-002 |
+| **R-CAND** 候選產生 | 依流程依賴表、目前進度、有效醫囑，算出**允許的下一站候選** | FR-01、FR-02、D-002、D-020 |
+| **R-ROUTE** 路線檢查 | 檢查 LLM 描述的路線(樓層圖節點序列)：相鄰節點之間有路段、路段開放、符合無障礙需求、起訖點正確 | FR-01、FR-13、D-020 |
 | **R-WL** 白名單組裝 | 只取姓名、年齡、性別、醫囑、無障礙需求，組成送給 AI 的病人資料 | FR-07、FR-13、FR-14、FR-22、D-006 |
 | **R-GUARD** 輸出檢查 | 檢查 AI 輸出的格式、必須包含的內容、不得出現的內容(見第 4 節) | FR-01、FR-21、FR-23、P3 |
 | **R-DEP** 依賴檢查(RuleBase 檢查者) | 比對 AI 選定的流程是否違反流程依賴表 | FR-02、FR-03、D-008 |
-| **R-ORCH** 規劃流程控制 | 串接 R-CAND → A-PLAN → R-GUARD → 檢查者；處理重試上限、檢查者模式、失敗轉備援；記錄系統錯誤 | FR-03、FR-04、D-008、D-011 |
+| **R-ORCH** 規劃流程控制 | 串接 R-CAND → A-PLAN → R-GUARD(含 R-ROUTE) → 檢查者；處理重試上限、檢查者模式、失敗轉備援；記錄系統錯誤 | FR-03、FR-04、D-008、D-011 |
 | **R-DESK** 服務台備援 | 依最新生效樓層圖選服務台與路線、產生固定文案 | FR-04、FR-21、NFR-01、D-017 |
 | **R-QUEUE** 模擬叫號 | 提供 (b) 預計等候時間、(c) 目前叫號、預測人流(皆為模擬資料) | FR-15、FR-16 |
 | **R-IMPACT** 變動影響判斷 | 新版本生效時，比對各導引工作階段的當前與未走路段、未抵達站點 | FR-20、D-015、D-018 |
@@ -47,11 +48,11 @@
 
 | 模組 | 職責 | 可以決定什麼 | 不可以做什麼 | 對應 |
 |---|---|---|---|---|
-| **A-PLAN** 導引規劃 | 依今日事務文字與白名單資料，從 R-CAND 的候選中**選出**下一站與路線，並產生說明文字 | 選哪一個下一站候選、選哪一條路線候選、說明文字、(a) 步行時間估計、(d) 整趟時間估計、是否「超出就醫流程範圍」、是否提示求助 | 不能新增候選以外的站點或路線；不能改動候選、依賴表、進度、醫囑或使用者輸入；不能輸出緊急等級、病名、診斷、處置建議 | FR-01、FR-15、FR-21、FR-23、D-002、D-007、D-010 |
+| **A-PLAN** 導引規劃 | 依今日事務文字與白名單資料，從 R-CAND 的候選中**挑選**下一站，並**自由描述**前往路線(D-020) | 選哪一個下一站候選；路線經過哪些樓層圖節點(依序)；說明文字；(a) 步行時間估計；(d) 整趟時間估計；是否「超出就醫流程範圍」；是否提示求助 | 不能選候選以外的下一站；路線只能使用樓層圖既有的節點 id；不能改動候選、依賴表、進度、醫囑或使用者輸入；不能輸出緊急等級、病名、診斷、處置建議 | FR-01、FR-15、FR-21、FR-23、D-002、D-007、D-010、D-020 |
 | **A-CHECK** 專用 Agent 檢查者 | 依提示詞檢查 A-PLAN 的輸出是否違反依賴 | 通過／不通過與理由 | 不能修改 A-PLAN 的輸出 | FR-03、D-008 |
 | **A-CLIENT** 模型呼叫 | 以 Claude API 呼叫 `claude-haiku-5-5`，使用結構化輸出；處理逾時、服務錯誤、拒絕回應 | — | 不在前端呼叫；金鑰只在後端 | NFR-01、D-001 Q-34 |
 
-> **對 D-002 的落實方式**：[REQ-04-02] 規定「由 LLM 自己判斷下一站與路線」。本設計讓 LLM 在規則程式給定的候選中做判斷，以同時滿足 P2(AI 不得改動規則結果)與 [REQ-04-03](不得牴觸依賴)。這是一種詮釋，列為 DD-01 待小組確認。
+> **對 D-002 的落實方式(D-020)**：下一站由 LLM 從規則程式給定的候選中挑選，確保不牴觸依賴([REQ-04-03])；路線由 LLM 自由描述，再由 R-ROUTE 檢查是否可走。AI 的輸出不會改動規則程式的結果(P2)。
 
 ---
 
@@ -61,19 +62,19 @@
 使用者輸入(今日事務文字)──┐
 模擬病人資料 ── R-WL 白名單 ─┤
 進度/醫囑 ── R-PROGRESS ─────┤
-版本組合 ── R-STATIC ── R-CAND(下一站候選＋路線候選) ─┤
+版本組合 ── R-STATIC ── R-CAND(下一站候選)、樓層圖 ─┤
                                                       ▼
                          ┌──────── 唯讀輸入包 PlanInput(凍結) ────────┐
                          │  · 提示詞檔(規格原文)                         │
                          │  · 白名單病人資料、今日事務文字                 │
-                         │  · 候選清單(含 id)、路段距離等資訊             │
+                         │  · 下一站候選(含 id)、樓層圖節點與路段         │
                          └──────────────────┬──────────────────────────┘
                                             ▼
                                   A-PLAN(Claude Haiku)
                                             ▼
-                                  AiPlanOutput(只含選擇的 id 與文字)
+                                  AiPlanOutput(下一站 id、路線節點序列、文字)
                                             ▼
-                        R-GUARD 格式／必含／不得出現 ──不通過──┐
+                        R-GUARD 格式／必含／不得出現／R-ROUTE ─不通過┐
                                             ▼                    │
                         檢查者(依模式：R-DEP／A-CHECK／兩者) ─不通過┤
                                             ▼                    ▼
@@ -85,7 +86,7 @@
 **單向保證的實作方式**
 
 1. **輸入凍結**：R-ORCH 先組好 `PlanInput`(不可變的資料物件)並計算雜湊值；AI 呼叫前後比對雜湊，不一致即視為系統錯誤。
-2. **輸出只含參照**：A-PLAN 的結構化輸出只允許 `next_station_id`、`route_id` 這類「候選 id」與文字欄位；最後顯示的站點名稱、樓層、路段，一律由 R-STATIC 依 id 查出，不使用 AI 產生的名稱。
+2. **輸出只含參照**：A-PLAN 的結構化輸出只允許 `next_station_id`(候選 id)、`route_node_ids`(樓層圖節點 id 序列)與文字欄位；最後顯示的站點名稱、樓層、路段，一律由 R-STATIC 依 id 查出，不使用 AI 產生的名稱。
 3. **分開儲存**：AI 輸出存在 `ai_plans` 集合，引用版本組合與 `PlanInput` 雜湊；規則資料所在的集合，AI 模組沒有寫入權限(程式層：AI 模組不匯入 Firestore 寫入函式；資料層：Firestore 規則禁止前端寫入)。
 4. **AI 不呼叫寫入型工具**：提供給模型的 tool 只有唯讀查詢(D-011 Q-29)；工具結果也來自 R-STATIC／R-QUEUE。
 
@@ -98,8 +99,8 @@ A-PLAN 使用 Claude API 的結構化輸出(`output_config.format` 的 JSON Sche
 | 類別 | 檢查項目 | 不通過時 |
 |---|---|---|
 | **格式** | 符合 `AiPlanOutput` JSON Schema(必要欄位、型別、無多餘欄位)；`stop_reason` 不是 `refusal`、不是 `max_tokens` | 視為 AI 失敗，計入重試 |
-| **必須包含** | `next_station_id` 屬於 R-CAND 的下一站候選；`route_id` 屬於該站的路線候選；`explanation` 非空字串；`walk_minutes_estimate`、`total_minutes_estimate` 為數值或 null；`out_of_scope`、`suggest_help` 為布林值 | 計入重試 |
-| **不得出現** | 輸出中不得出現候選以外的站點 id；說明文字中出現的站點名稱(依 R-STATIC 名稱表比對)只能是被選中的站點或其路線經過的站點；不得出現白名單以外的病人欄位；不得出現緊急等級、病名、診斷、處置建議的欄位(Schema 不提供這些欄位) | 計入重試 |
+| **必須包含** | `next_station_id` 屬於 R-CAND 的下一站候選；`route_node_ids` 由目前位置開始、在該下一站結束，且通過 R-ROUTE 檢查(相鄰節點有路段、路段開放、符合無障礙需求)；`explanation` 非空字串；`walk_minutes_estimate`、`total_minutes_estimate` 為數值或 null；`out_of_scope`、`suggest_help` 為布林值 | 計入重試 |
+| **不得出現** | 輸出中不得出現候選以外的下一站 id、樓層圖以外的節點 id；說明文字中出現的站點名稱(依 R-STATIC 名稱表比對)只能是被選中的站點或其路線經過的站點；不得出現白名單以外的病人欄位；不得出現緊急等級、病名、診斷、處置建議的欄位(Schema 不提供這些欄位) | 計入重試 |
 
 - `out_of_scope = true` 時(使用者問診斷或非就醫流程問題)：不顯示 AI 的說明文字，改由 R-DESK 顯示 [AC-21.3] 的固定文案與服務台路線。
 - `suggest_help = true` 時：只觸發求助按鈕提示([AC-23.4])，不顯示任何判斷文字。
@@ -242,12 +243,12 @@ firebase emulators:start --project demo-aiguide
 
 | 編號 | 問題 | 為何需要決定 | 相關 |
 |---|---|---|---|
-| DD-01 | 是否同意「LLM 只能從規則程式給的候選中選擇下一站與路線」作為 [REQ-04-02]「LLM 自己判斷」的落實方式？ | 這是同時滿足 P2 與 [REQ-04-03] 的設計；若不同意，P2 需要改寫 | D-002 |
+| ~~DD-01~~ | ~~下一站與路線的決策分工~~ | 已決定：D-020(下一站從候選挑選，路線由 LLM 自由描述後由規則檢查) | D-002 |
 | DD-02 | 檢查者模式為「只用專用 Agent」時，R-GUARD 的候選檢查是否仍然執行？(本設計：仍執行，因為它屬於 P3 的輸出檢查，不屬於 D-008 的檢查者) | 影響 D-008 三種模式的實際差異 | D-008 |
 | DD-03 | 說明文字中「不得出現」的診斷類用語詞表 | R-GUARD 需要具體詞表才能檢查；規格與決策都沒有提供 | FR-21、D-010 |
 | DD-04 | 模型呼叫逾時秒數、`max_tokens` | 影響備援觸發時機；規格與決策都沒有提供 | NFR-01 |
 | DD-05 | 模擬資料：樓層圖、流程依賴表、站點清單、服務台、顯眼地標、等候區對應 | R-STATIC、R-CAND、R-DESK、R-HELP 都需要；依 D-019 須先完成 AI 草稿與小組走查 | D-019、FR-05、FR-23 |
-| DD-06 | 路線候選的產生方式與數量(例如每個下一站提供幾條路線) | R-CAND 需要；規格與決策都沒有提供 | FR-01 |
+| ~~DD-06~~ | ~~路線候選的產生方式與數量~~ | 依 D-020 不再產生路線候選，此項不適用 | FR-01 |
 | DD-07 | 模擬病人與固定測試碼的內容 | R-AUTH 與匯入腳本需要 | FR-09、FR-10 |
 
 ---
@@ -258,7 +259,7 @@ firebase emulators:start --project demo-aiguide
 
 | 需求 | 模組 | 測試檔 |
 |---|---|---|
-| FR-01 規劃下一站與路線 | R-CAND、A-PLAN、R-ORCH、R-GUARD | `functions/tests/rules/test_candidates.py`、`functions/tests/ai/test_planner.py`、`functions/tests/rules/test_plan_pipeline.py`、`functions/tests/rules/test_output_guard.py` |
+| FR-01 規劃下一站與路線 | R-CAND、R-ROUTE、A-PLAN、R-ORCH、R-GUARD | `functions/tests/rules/test_candidates.py`、`functions/tests/rules/test_route_check.py`、`functions/tests/ai/test_planner.py`、`functions/tests/rules/test_plan_pipeline.py`、`functions/tests/rules/test_output_guard.py` |
 | FR-02 流程依賴限制 | R-CAND、R-DEP | `functions/tests/rules/test_candidates.py`、`functions/tests/rules/test_dependency_checker.py` |
 | FR-03 輸出檢查與重新產生 | R-ORCH、R-DEP、A-CHECK | `functions/tests/rules/test_plan_pipeline.py`、`functions/tests/rules/test_dependency_checker.py`、`functions/tests/ai/test_agent_checker.py` |
 | FR-04 重試上限與轉介服務台 | R-ORCH、R-DESK | `functions/tests/rules/test_plan_pipeline.py`、`functions/tests/rules/test_service_desk.py` |
@@ -270,7 +271,7 @@ firebase emulators:start --project demo-aiguide
 | FR-10 手機簡訊認證 | R-AUTH | `functions/tests/rules/test_auth_mock.py` |
 | FR-11 僅限院內使用 | (僅文件) | — |
 | FR-12 只顯示今日行程 | 前端使用者資訊頁、Firestore 規則 | `frontend/src/pages/__tests__/ProfilePage.test.tsx`、`tests/firestore-rules/rules.test.ts` |
-| FR-13 收集無障礙需求 | 前端使用者資訊頁、R-WL、R-CAND | `frontend/src/pages/__tests__/ProfilePage.test.tsx`、`functions/tests/rules/test_whitelist.py`、`functions/tests/rules/test_candidates.py` |
+| FR-13 收集無障礙需求 | 前端使用者資訊頁、R-WL、R-ROUTE | `frontend/src/pages/__tests__/ProfilePage.test.tsx`、`functions/tests/rules/test_whitelist.py`、`functions/tests/rules/test_route_check.py` |
 | FR-14 醫囑輸入 | R-PROGRESS、R-NOTIFY、R-WL | `functions/tests/rules/test_progress.py`、`functions/tests/rules/test_notify.py`、`functions/tests/rules/test_whitelist.py` |
 | FR-15 時間類輸出 | R-QUEUE、A-PLAN、前端今日行程頁 | `functions/tests/rules/test_queue_mock.py`、`functions/tests/ai/test_planner.py`、`frontend/src/pages/__tests__/ItineraryPage.test.tsx` |
 | FR-16 預測抵達時間與人流 | R-QUEUE | `functions/tests/rules/test_queue_mock.py` |

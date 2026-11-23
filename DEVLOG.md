@@ -58,3 +58,8 @@
 - 前端：Vite + React + TypeScript 骨架，dev server 將 /api 代理到 Functions emulator。
 - Emulators：auth 9099、functions 5001、firestore 8080、hosting 5100(5000 被 macOS AirPlay 佔用)、UI 4000；專案 demo-aiguide。煙霧測試全部 200，/api/health 經 Hosting 轉發回傳 {"status":"ok"}。
 - firestore.rules 暫時全部拒絕，待撰寫規則測試後再開放讀取。
+
+## 2026-11-23 — DD-01 決定(D-020)
+
+- 下一站從 R-CAND 候選挑選；路線由 LLM 以樓層圖節點序列自由描述，新增規則模組 R-ROUTE 檢查是否可走。
+- design.md 同步更新；DD-06(路線候選)因此不適用。
