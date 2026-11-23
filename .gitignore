@@ -3,8 +3,11 @@
 .env.*
 !.env.example
 
-# Claude / 編輯器
-.claude/
+# Claude / 編輯器(保留 openspec 技能)
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/openspec-*/
 .vscode/
 .idea/
 
