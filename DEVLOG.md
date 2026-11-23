@@ -37,3 +37,9 @@
 ## 2026-11-23 — 原型模型改為 Claude Haiku
 
 - 依小組指示，D-001 的 Q-34 由 OpenAI 暫定方案改為 Claude API 的 `claude-haiku-5-5`；requirements.md NFR-01 同步更新。
+
+## 2026-11-23 — 整併暫定假設至 requirements.md
+
+- 將 decisions.md 中原型相關的暫定假設寫成驗收條件，標示「(暫定，D-xxx)」，共新增 29 條暫定 AC；AC 總數 81 條。
+- 新增 AC-NFR01.2、AC-NFR01.3(Claude API `claude-haiku-5-5` 與無法使用時的備援)；FR-25 納入指標 B。
+- 正式版才適用的暫定假設(簡訊門號、資料授權、醫囑同步、SSO)未寫入 AC，仍留在 decisions.md。
