@@ -7,7 +7,7 @@
 .claude/*
 !.claude/skills/
 .claude/skills/*
-!.claude/skills/openspec-*/
+!.claude/skills/openspec-*
 .vscode/
 .idea/
 
