@@ -43,3 +43,6 @@ coverage/
 *-debug.log
 functions/.secret.local
 .runtimeconfig.json
+
+# 模擬資料草稿：小組核對前不推送(D-024)
+mock_data_draft/
