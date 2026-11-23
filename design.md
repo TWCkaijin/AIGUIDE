@@ -1,6 +1,6 @@
 # design.md — 醫院通系統設計
 
-> 依據：`requirements.md`(FR／NFR／AC)與 `decisions.md`(D-001～D-023)。規格書 `AI-specification.md` 不修改。
+> 依據：`requirements.md`(FR／NFR／AC)與 `decisions.md`(D-001～D-024)。規格書 `AI-specification.md` 不修改。
 > 本文件的技術選型由開發端規劃(依小組指定：雲端優先 Firebase、前端 Vite + React、後端 Python Flask)。
 > 規格與決策都沒有寫的數值、名單與規則，本文件不自行填入，一律列在第 10 節「設計待決事項」(DD-xx)。
 
@@ -247,7 +247,7 @@ firebase emulators:start --project demo-aiguide
 | ~~DD-02~~ | ~~檢查者模式與規則輸出檢查的分工~~ | 已決定：D-021(R-GUARD 一律執行；R-ROUTE、R-DEP 依檢查者模式) | D-008 |
 | ~~DD-03~~ | ~~診斷類用語詞表~~ | 已決定：D-022(暫不做詞彙檢查) | FR-21、D-010 |
 | DD-04 | 模型呼叫逾時秒數、`max_tokens` 的**初始值**；重試總等待時間是否設上限 | D-023 已決定兩者列為可在後台調整的模型設定(需簽核)，但初始值與總上限仍未決 | NFR-01、D-023 |
-| DD-05 | 模擬資料：樓層圖、流程依賴表、站點清單、服務台、顯眼地標、等候區對應 | R-STATIC、R-CAND、R-DESK、R-HELP 都需要；依 D-019 須先完成 AI 草稿與小組走查 | D-019、FR-05、FR-23 |
+| ~~DD-05~~ | ~~模擬資料的製作方式~~ | 已決定：D-024(開發端產出 JSON 草稿，小組依 D-019 核對後放入 `mock_data/`) | D-019、FR-05、FR-23 |
 | ~~DD-06~~ | ~~路線候選的產生方式與數量~~ | 依 D-020 不再產生路線候選，此項不適用 | FR-01 |
 | DD-07 | 模擬病人與固定測試碼的內容 | R-AUTH 與匯入腳本需要 | FR-09、FR-10 |
 
