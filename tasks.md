@@ -15,3 +15,4 @@
 - [x] 逐題釐清 design.md 設計待決事項 DD-01～DD-07(D-020～D-025)
 - [x] 產出模擬資料草稿(mock_data_draft/，D-024、D-025)與一致性檢查腳本
 - [x] 依 requirements.md 與 decisions.md 產出 test-cases.md(140 案例、8 項待確認 TQ)
+- [x] 逐題釐清 test-cases.md 待確認事項 TQ-01～TQ-08(D-026～D-036)，同步 requirements／design／test-cases
