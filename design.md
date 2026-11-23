@@ -1,6 +1,6 @@
 # design.md — 醫院通系統設計
 
-> 依據：`requirements.md`(FR／NFR／AC)與 `decisions.md`(D-001～D-022)。規格書 `AI-specification.md` 不修改。
+> 依據：`requirements.md`(FR／NFR／AC)與 `decisions.md`(D-001～D-023)。規格書 `AI-specification.md` 不修改。
 > 本文件的技術選型由開發端規劃(依小組指定：雲端優先 Firebase、前端 Vite + React、後端 Python Flask)。
 > 規格與決策都沒有寫的數值、名單與規則，本文件不自行填入，一律列在第 10 節「設計待決事項」(DD-xx)。
 
@@ -187,7 +187,7 @@ AIHealthCare/
 | 集合 | 內容 | 寫入者 |
 |---|---|---|
 | `data_versions/{v}` | 站點、部門、樓層圖節點與路段、服務台、地標、等候區(某一版本) | R-VERSION |
-| `model_settings_versions/{v}` | 提示詞、流程依賴表、檢查者模式、模型、重試上限、工具組件 | R-VERSION |
+| `model_settings_versions/{v}` | 提示詞、流程依賴表、檢查者模式、模型、重試上限、工具組件、逾時秒數、`max_tokens`(D-023) | R-VERSION |
 | `active/current` | 目前生效的版本組合 | R-VERSION |
 | `change_requests/{id}` | 部門資訊變更、模型設定變更的送審／送簽紀錄 | R-VERSION |
 | `patients/{id}` | 模擬病人(只有白名單 5 欄) | 匯入腳本 |
@@ -246,7 +246,7 @@ firebase emulators:start --project demo-aiguide
 | ~~DD-01~~ | ~~下一站與路線的決策分工~~ | 已決定：D-020(下一站從候選挑選，路線由 LLM 自由描述後由規則檢查) | D-002 |
 | ~~DD-02~~ | ~~檢查者模式與規則輸出檢查的分工~~ | 已決定：D-021(R-GUARD 一律執行；R-ROUTE、R-DEP 依檢查者模式) | D-008 |
 | ~~DD-03~~ | ~~診斷類用語詞表~~ | 已決定：D-022(暫不做詞彙檢查) | FR-21、D-010 |
-| DD-04 | 模型呼叫逾時秒數、`max_tokens` | 影響備援觸發時機；規格與決策都沒有提供 | NFR-01 |
+| DD-04 | 模型呼叫逾時秒數、`max_tokens` 的**初始值**；重試總等待時間是否設上限 | D-023 已決定兩者列為可在後台調整的模型設定(需簽核)，但初始值與總上限仍未決 | NFR-01、D-023 |
 | DD-05 | 模擬資料：樓層圖、流程依賴表、站點清單、服務台、顯眼地標、等候區對應 | R-STATIC、R-CAND、R-DESK、R-HELP 都需要；依 D-019 須先完成 AI 草稿與小組走查 | D-019、FR-05、FR-23 |
 | ~~DD-06~~ | ~~路線候選的產生方式與數量~~ | 依 D-020 不再產生路線候選，此項不適用 | FR-01 |
 | DD-07 | 模擬病人與固定測試碼的內容 | R-AUTH 與匯入腳本需要 | FR-09、FR-10 |
