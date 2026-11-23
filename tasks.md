@@ -6,3 +6,4 @@
 - [x] 依 decisions.md(D-001～D-019)更新 requirements.md
 - [x] 為 decisions.md 的 D-005、D-006、D-009、D-012、D-013、D-014、D-018、D-019 補上暫定假設
 - [x] 補齊 requirements.md 的 Q-20～Q-34 暫定假設並對應 decisions.md
+- [x] 原型線上模型改為 Claude API Haiku(claude-haiku-5-5)
