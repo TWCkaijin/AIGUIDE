@@ -527,6 +527,10 @@
   - Given 原型正在執行
   - When 後端呼叫 LLM
   - Then 由後端以 Claude API 呼叫 `claude-haiku-5-5`，金鑰只存在後端環境
+- **AC-NFR01.4**(D-023、D-029)
+  - Given 尚未在後台修改模型設定
+  - When 後端呼叫 LLM
+  - Then 單次呼叫逾時為 30 秒、`max_tokens` 為 16000；從第一次呼叫起已經過 ≥ 60 秒時，不再發出下一次呼叫，直接轉服務台備援
 - **AC-NFR01.3**(D-001 Q-34)
   - Given 模型服務無法使用，或模型拒絕回應
   - When 系統需要 LLM 規劃
