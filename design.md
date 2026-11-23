@@ -1,6 +1,6 @@
 # design.md — 醫院通系統設計
 
-> 依據：`requirements.md`(FR／NFR／AC)與 `decisions.md`(D-001～D-033)。規格書 `AI-specification.md` 不修改。
+> 依據：`requirements.md`(FR／NFR／AC)與 `decisions.md`(D-001～D-035)。規格書 `AI-specification.md` 不修改。
 > 本文件的技術選型由開發端規劃(依小組指定：雲端優先 Firebase、前端 Vite + React、後端 Python Flask)。
 > 規格與決策都沒有寫的數值、名單與規則，本文件不自行填入，一律列在第 10 節「設計待決事項」(DD-xx)。
 
@@ -286,6 +286,7 @@ firebase emulators:start --project demo-aiguide
 | FR-25 成效指標計算 | R-METRIC | `functions/tests/rules/test_metrics.py` |
 | FR-26 單一後台與角色分頁 | 前端後台、R-RBAC、Firestore 規則 | `frontend/src/admin/__tests__/AdminTabs.test.tsx`、`functions/tests/rules/test_rbac.py`、`tests/firestore-rules/rules.test.ts` |
 | FR-27 服務台代填今日事務 | 前端後台代填分頁、R-RBAC、R-ORCH | `frontend/src/admin/__tests__/ProxyInputTab.test.tsx`、`functions/tests/rules/test_rbac.py`、`functions/tests/integration/test_api_plan.py` |
+| FR-28 補充需求後重新規劃 | 前端 AI 對話頁、R-ORCH | `frontend/src/pages/__tests__/ChatPage.test.tsx`、`functions/tests/integration/test_api_plan.py` |
 | NFR-01 模型(Claude Haiku)與備援 | A-CLIENT、R-DESK | `functions/tests/ai/test_claude_client.py`、`functions/tests/rules/test_service_desk.py` |
 | NFR-02 網頁形式 | 前端、Hosting | `functions/tests/integration/test_hosting_smoke.py` |
 | NFR-03 病人端 6 個畫面 | 前端路由 | `frontend/src/__tests__/routes.test.tsx` |
