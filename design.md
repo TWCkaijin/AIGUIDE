@@ -1,6 +1,6 @@
 # design.md — 醫院通系統設計
 
-> 依據：`requirements.md`(FR／NFR／AC)與 `decisions.md`(D-001～D-029)。規格書 `AI-specification.md` 不修改。
+> 依據：`requirements.md`(FR／NFR／AC)與 `decisions.md`(D-001～D-033)。規格書 `AI-specification.md` 不修改。
 > 本文件的技術選型由開發端規劃(依小組指定：雲端優先 Firebase、前端 Vite + React、後端 Python Flask)。
 > 規格與決策都沒有寫的數值、名單與規則，本文件不自行填入，一律列在第 10 節「設計待決事項」(DD-xx)。
 
@@ -41,7 +41,7 @@
 | **R-NOTIFY** 站內通知 | 寫入通知、同一工作階段同一版本只推一次 | FR-14、FR-20、D-013、D-015 |
 | **R-HELP** 求助通報 | 組成通報(模擬姓名、必要時無障礙需求、站點或路段)，送給護理站與服務台 | FR-23、D-010、D-011 |
 | **R-AUTH** 登入 | 模擬身分證／健保卡登入、固定測試碼驗證、建立工作階段 | FR-09、FR-10、FR-12、D-005 |
-| **R-RBAC** 後台權限 | 角色與部門範圍、禁止自審自簽 | FR-19、FR-24、FR-26、D-012、D-016 |
+| **R-RBAC** 後台權限 | 角色與部門範圍、禁止自審自簽、服務台只能代填今日事務 | FR-19、FR-24、FR-26、FR-27、D-012、D-016、D-033 |
 | **R-METRIC** 成效指標 | 指標 A 依路段計時與平均、指標 B 計算 | FR-25、D-014 |
 
 ### 2.2 交給生成式 AI → AI 模組(`functions/ai/`)
@@ -285,6 +285,7 @@ firebase emulators:start --project demo-aiguide
 | FR-24 模型設定修改與雙人覆核 | R-VERSION、R-RBAC | `functions/tests/rules/test_versioning.py`、`functions/tests/rules/test_rbac.py` |
 | FR-25 成效指標計算 | R-METRIC | `functions/tests/rules/test_metrics.py` |
 | FR-26 單一後台與角色分頁 | 前端後台、R-RBAC、Firestore 規則 | `frontend/src/admin/__tests__/AdminTabs.test.tsx`、`functions/tests/rules/test_rbac.py`、`tests/firestore-rules/rules.test.ts` |
+| FR-27 服務台代填今日事務 | 前端後台代填分頁、R-RBAC、R-ORCH | `frontend/src/admin/__tests__/ProxyInputTab.test.tsx`、`functions/tests/rules/test_rbac.py`、`functions/tests/integration/test_api_plan.py` |
 | NFR-01 模型(Claude Haiku)與備援 | A-CLIENT、R-DESK | `functions/tests/ai/test_claude_client.py`、`functions/tests/rules/test_service_desk.py` |
 | NFR-02 網頁形式 | 前端、Hosting | `functions/tests/integration/test_hosting_smoke.py` |
 | NFR-03 病人端 6 個畫面 | 前端路由 | `frontend/src/__tests__/routes.test.tsx` |
