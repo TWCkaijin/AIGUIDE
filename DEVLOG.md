@@ -166,3 +166,11 @@
 
 - 接上真實金鑰後保留「使用範例」按鈕(D-038)；design.md 補上示範草案說明；3.0 打勾。
 - 階段 3 的 3.1 起可開始。
+
+## 2026-11-27 — 階段 2 完成(R-ORCH、A-CLIENT 介面)
+
+- 先寫測試：`tests/rules/test_plan_pipeline.py`(R-ORCH)、`tests/ai/test_claude_client.py`(A-CLIENT)；執行後因模組不存在而全部失敗。
+- 實作：`rules/plan_pipeline.py`(設定、PlanInput 雜湊、重試、檢查者模式、60 秒總上限、備援)、`ai/claude_client.py`(介面、請求組成、缺金鑰行為)、`ai/fake_client.py`(假客戶端與時鐘)。
+- 全部測試 97 個通過。真實 API 呼叫留到階段 7；R-ROUTE、R-DEP、R-DESK 在階段 4，目前以注入的假物件代替。
+- 開發端自行解讀的地方(需小組確認)：(1) 模型拒絕回應與無法連線直接轉服務台，不重試；逾時與 `max_tokens` 截斷計入重試。(2) Agent 檢查結果拿不到時，該次不發布並計入重試，而非直接轉服務台。(3) 輸入雜湊不一致時顯示 AI 無法使用的文案。(4) TC-CHK-05(模式變更簽核前仍用舊模式)屬 R-VERSION，留到階段 5。
+

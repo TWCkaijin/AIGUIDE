@@ -50,12 +50,12 @@
 | R-ORCH 規劃流程控制 | `functions/tests/rules/test_plan_pipeline.py` | TC-GUARD-05、TC-RETRY-01～06、TC-CHK-01～05、TC-AIF-01～09、TC-BAD-05、TC-PROP-N6 |
 | A-CLIENT 模型呼叫介面(含假客戶端) | `functions/tests/ai/test_claude_client.py` | TC-AIF-01～04、AC-NFR01.2、TC-WL-01 |
 
-- [ ] 2.1 寫 R-ORCH 測試(以假的 AI 客戶端與假的服務台備援注入)
-- [ ] 2.2 寫 A-CLIENT 介面測試(不呼叫真實 API)
-- [ ] 2.3 執行測試，確認失敗
-- [ ] 2.4 實作 R-ORCH
-- [ ] 2.5 實作 A-CLIENT 介面與假客戶端
-- [ ] 2.6 執行測試，確認通過
+- [x] 2.1 寫 R-ORCH 測試(以假的 AI 客戶端與假的服務台備援注入)
+- [x] 2.2 寫 A-CLIENT 介面測試(不呼叫真實 API)
+- [x] 2.3 執行測試，確認失敗
+- [x] 2.4 實作 R-ORCH
+- [x] 2.5 實作 A-CLIENT 介面與假客戶端
+- [x] 2.6 執行測試，確認通過
 
 ## 階段 3：示範草案模式(AI 未接上真實金鑰前)
 
