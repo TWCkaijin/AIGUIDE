@@ -81,10 +81,10 @@
 | R-DEP 依賴檢查 | `functions/tests/rules/test_dependency_checker.py` | TC-EX-01、TC-CAND-05／06 |
 | R-DESK 服務台備援 | `functions/tests/rules/test_service_desk.py` | TC-DESK-01～09、TC-SCOPE-01 |
 
-- [ ] 4.1 寫 R-STATIC、R-CAND、R-ROUTE、R-DEP、R-DESK 測試
-- [ ] 4.2 執行測試，確認失敗
-- [ ] 4.3 實作 R-STATIC、R-CAND、R-ROUTE、R-DEP、R-DESK
-- [ ] 4.4 執行測試，確認通過
+- [x] 4.1 寫 R-STATIC、R-CAND、R-ROUTE、R-DEP、R-DESK 測試
+- [x] 4.2 執行測試，確認失敗
+- [x] 4.3 實作 R-STATIC、R-CAND、R-ROUTE、R-DEP、R-DESK
+- [x] 4.4 執行測試，確認通過
 
 ## 階段 5：進度、版本、通知與影響
 

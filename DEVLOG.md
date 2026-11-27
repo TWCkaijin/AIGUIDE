@@ -185,3 +185,12 @@
 - 範圍：本階段只做後端的範例清單與載入草稿(只有檢查者模式、標示「範例」、不改生效設定)。「使用範例」按鈕畫面在階段 9，送簽、簽核流程在階段 5、6 做完後一併驗收。
 - 範例的說明文字由開發端依 D-008 草擬。
 
+## 2026-11-27 — 階段 4 完成(R-STATIC、R-CAND、R-ROUTE、R-DEP、R-DESK)
+
+- 先寫測試(5 個測試檔加 `tests/rules/conftest.py` 夾具，讀 `mock_data_draft/`，資料夾不存在時略過，D-037)；執行後因模組不存在而失敗。
+- 實作：`rules/static_data.py`、`candidates.py`、`route_check.py`、`dependency_check.py`、`rule_checker.py`(R-ROUTE＋R-DEP，供 R-ORCH 注入)、`service_desk.py`。
+- 全部測試：本機 158 個通過；移走 mock_data_draft 後 107 通過、51 略過。
+- 備援文案三種：AC-04.2(重試用完)、AC-NFR01.3(AI 無法使用)、AC-21.3(超出範圍)；起點未知先請使用者選站，仍無法確認顯示「請詢問附近院內人員」。
+- 開發端自行處理、需小組確認：(1) 起點已知但沒有可通行的服務台路線時，只顯示「請詢問附近院內人員」，**沒有**附服務台樓層(D-017 提到「可確認位置時提供服務台所在樓層」，但沒說是哪一個服務台)。(2) R-DEP 的判定：選定站點必須對應一個尚未完成、醫囑需要、且前置步驟都完成的步驟。(3) 服務台備援只用在 `retries_exhausted`、`ai_unavailable`、`out_of_scope` 三種情況。
+- 未做：TC-VER-02～04、TC-VER 版本切換屬 R-VERSION(階段 5)；TC-DATA-04 目前只驗證缺依賴表會丟錯，轉備援的串接在階段 8。
+
