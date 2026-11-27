@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 SCHEDULE_UPDATED_TEXT = "今日行程已更新，請確認下一站"  # D-013
-# 路線變動通知的文案，規格沒有指定；暫沿用 D-013 的文案，待小組確認(見 DEVLOG 2026-11-27 階段 5)。
+# 路線變動通知的文案，規格沒有指定；暫沿用 D-013 的文案，D-041。
 ROUTE_CHANGED_TEXT = SCHEDULE_UPDATED_TEXT
 
 
