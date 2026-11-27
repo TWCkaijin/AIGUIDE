@@ -90,16 +90,16 @@
 
 | 模組 | 測試檔 | 對應案例 |
 |---|---|---|
-| R-PROGRESS | `functions/tests/rules/test_progress.py` | TC-ORD-01～04、TC-DATA-08 |
-| R-VERSION | `functions/tests/rules/test_versioning.py` | TC-VER-02～04、TC-REV-01～07、TC-SET-01～05 |
+| R-PROGRESS | `functions/tests/rules/test_progress.py` | TC-ORD-01、02、04～06、TC-PROG-01、02、TC-DATA-02、06、08、09 |
+| R-VERSION | `functions/tests/rules/test_versioning.py` | TC-VER-02～04、TC-REV-01～09、TC-SET-01～08 |
 | R-NOTIFY | `functions/tests/rules/test_notify.py` | TC-ORD-01／02、TC-IMP-05 |
-| R-IMPACT | `functions/tests/rules/test_impact.py` | TC-IMP-01～05 |
-| R-QUEUE | `functions/tests/rules/test_queue_mock.py` | TC-TIME-03、TC-DATA-03、TC-DATA-10 |
+| R-IMPACT | `functions/tests/rules/test_impact.py` | TC-IMP-01～07 |
+| R-QUEUE | `functions/tests/rules/test_queue_mock.py` | TC-TIME-01～04、06、TC-DATA-03、TC-DATA-10 |
 
-- [ ] 5.1 寫測試
-- [ ] 5.2 執行測試，確認失敗
-- [ ] 5.3 實作
-- [ ] 5.4 執行測試，確認通過
+- [x] 5.1 寫測試
+- [x] 5.2 執行測試，確認失敗
+- [x] 5.3 實作
+- [x] 5.4 執行測試，確認通過
 
 ## 階段 6：登入、權限與求助
 
